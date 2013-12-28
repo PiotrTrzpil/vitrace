@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security-3.1.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+        http://www.springframework.org/schema/jdbc
+        http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+
+
+    <context:annotation-config />
+
+    <context:component-scan base-package="pt">
+        <!--  <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>-->
+
+    </context:component-scan>
+
+
+    <bean id="customizableTraceInterceptor" class="org.springframework.aop.interceptor.CustomizableTraceInterceptor">
+        <property name="enterMessage" value="Entering $[methodName]($[arguments])"/>
+        <property name="exitMessage" value="Leaving $[methodName](): $[returnValue]"/>
+        <property name="loggerName" value="pt.CustomizableTraceInterceptor"/>
+    </bean>
+
+    <aop:config>
+        <aop:advisor advice-ref="customizableTraceInterceptor"
+                     pointcut="execution(* pt.*.*(..))"/>
+    </aop:config>
+
+
+
+
+</beans>

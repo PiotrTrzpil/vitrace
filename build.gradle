@@ -1,0 +1,27 @@
+allprojects {
+    apply plugin: 'scala'
+    group = 'net.vitrace'
+    version = '1.0'
+
+}
+subprojects {
+ 
+    repositories {
+        mavenCentral()
+        maven {
+            url uri('http://katta.github.com/repository')
+        }
+        maven { url uri('http://repo.springsource.org/milestone') }
+    }
+    dependencies {
+        compile 'org.scala-lang:scala-compiler:2.10.3'
+        compile 'org.scala-lang:scala-library:2.10.3' 
+		compile "org.scalatest:scalatest_2.10:1.9.1"
+		testCompile 'junit:junit:4.10'
+    }
+}
+project(':vitrace-core') {
+    dependencies {
+        compile project(':rex-master')
+    }
+}
