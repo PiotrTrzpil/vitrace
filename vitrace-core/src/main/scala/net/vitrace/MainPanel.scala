@@ -1,8 +1,6 @@
-package pt
+package vitrace
 
-import java.awt.{Color, Dimension, Graphics2D}
-import javax.swing.SwingUtilities
-import java.util.concurrent.{Semaphore, LinkedBlockingQueue, BlockingQueue}
+import java.awt.{Dimension, Graphics2D}
 import scala.swing.Panel
 
 class MainPanel extends Panel

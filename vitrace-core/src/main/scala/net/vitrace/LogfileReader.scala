@@ -1,4 +1,4 @@
-package pt
+package vitrace
 
 import scala.io.BufferedSource
 

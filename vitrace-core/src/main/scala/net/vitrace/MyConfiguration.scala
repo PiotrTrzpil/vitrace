@@ -1,6 +1,5 @@
-package pt
+package vitrace
 
-import org.springframework.scala.context.function.{FunctionalConfiguration, FunctionalConfigApplicationContext}
 import org.springframework.stereotype.Component
 import org.slf4j.{LoggerFactory, Logger}
 

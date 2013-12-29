@@ -1,4 +1,4 @@
-package pt
+package vitrace
 
 object LogLevel extends Enumeration
 {

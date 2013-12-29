@@ -1,8 +1,8 @@
-package pt.parsers
+package vitrace.parsers
 
 import com.digitaldoodles.rex.{Lit, Chars}
 import org.springframework.format.datetime.joda.DateTimeParser
-import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
+import org.joda.time.format.DateTimeFormat
 import java.util.Locale
 
 class Log4NetStandardParser extends LogParser

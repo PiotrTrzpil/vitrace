@@ -1,4 +1,4 @@
-package pt.parsers
+package vitrace.parsers
 
 import com.digitaldoodles.rex.Chars
 

@@ -1,7 +1,6 @@
-package pt
+package vitrace
 
 import org.slf4j.{LoggerFactory, Logger}
-import scala.util.matching.Regex
 
 
 object MainController

@@ -1,12 +1,10 @@
-package pt.parsers
+package vitrace.parsers
 
 import com.digitaldoodles.rex.{CharSet, Chars, Lit}
-import org.springframework.format.datetime.joda.DateTimeParser
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.LocalTime
-import pt.LogLevel.LogLevel
-import pt.LogLevel
-import pt.LogLevel.LogLevel
+import vitrace.LogLevel
+import vitrace.LogLevel.LogLevel
 
 
 class SpringCustomParser extends LogParser

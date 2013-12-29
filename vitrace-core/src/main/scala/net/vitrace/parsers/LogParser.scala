@@ -1,4 +1,4 @@
-package pt.parsers
+package vitrace.parsers
 
 import scala.util.parsing.combinator.RegexParsers
 trait LogLine

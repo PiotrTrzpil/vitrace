@@ -1,23 +1,9 @@
-import ch.qos.logback.classic.net.SMTPAppender
-import com.digitaldoodles.rex.CharRange
-import com.digitaldoodles.rex.CharRange
-import com.digitaldoodles.rex.CharRange
-import java.sql.Driver
-import org.joda.time.DateTime
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
 
-import org.springframework.web.context.WebApplicationContext
-import pt.parsers._
-import pt._
-import pt.Tokenizer
-import scala.collection.mutable.ListBuffer
-import scala.collection.parallel.mutable
-import scala.Some
+import vitrace.parsers._
 import scala.language.experimental.macros
-import scala.Some
-import scala.Some
 
 
 // This imports the basic constructors and predefined patterns.
@@ -28,26 +14,11 @@ import scala.util.parsing.combinator.RegexParsers
 // as literals in Rex expressions.
 //import com.digitaldoodles.rex.Implicits._
 // This imports objects that contain further predefined patterns; see the API documentation for details.
-import com.digitaldoodles.rex.patterns._
-case class Treee(s:String)
-{
 
-}
 @RunWith(classOf[JUnitRunner])
-class ExampleSuite extends FunSuite with RegexParsers
+class Test1 extends FunSuite with RegexParsers
 {
-   test("t1")
-   {
-      val stack = new Tokenizer()
-      val tokens = List(new LineToken("logLevel", """\w+""".r),
-         new LineToken("thread", """\[(\d+)\]""".r))
-      val result: LogLineOLd = stack.tokenize("DEBUG [1] - 2013-10-24 19:44:23,305  1730ms Infrastructure.TraceAttribute", tokens)
-      println(result)
 
-
-      assert(result.logLevel === "DEBUG")
-      assert(result.thread === "1")
-   }
    case class Line4(message : String) extends LogLine
    {
       override def toMap : Map[String, Any] =

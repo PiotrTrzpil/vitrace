@@ -1,12 +1,10 @@
-package pt
+package vitrace
 
 import java.awt.Dimension
-import scala.swing
-import scala.swing
 import scala.swing.{MainFrame, SwingApplication}
 import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.context.support.ClassPathXmlApplicationContext
-import org.springframework.context.ApplicationContext
+import net.vitrace.Tet
 
 
 object Start extends SwingApplication

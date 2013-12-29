@@ -1,4 +1,4 @@
-package pt;
+package net.vitrace;
 
 import org.springframework.stereotype.*;
 
