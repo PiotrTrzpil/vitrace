@@ -17,7 +17,7 @@ class MainController(panel: MainPanel)
 
    def run()
    {
-      val tokenizer = new Tokenizer
+     // val tokenizer = new Tokenizer
       val reader = new LogfileReader
       val lines: Iterator[String] = reader.read("C:\\PLIKI\\Praca\\examplelog.txt")
      // val iterator: Iterator[LogLine] = lines map tokenizer.tokenize
