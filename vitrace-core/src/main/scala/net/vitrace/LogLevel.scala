@@ -6,7 +6,7 @@ object LogLevel extends Enumeration
    val Trace = Value("Trace")
    val Debug = Value("Debug")
    val Info = Value("Info")
-   val Warning = Value("Warning")
+   val Warn = Value("Warning")
    val Error = Value("Error")
 
 }

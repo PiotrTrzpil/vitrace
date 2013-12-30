@@ -1,4 +1,4 @@
-package vitrace.parsers
+package net.vitrace.parsers
 
 import scala.collection.mutable.ListBuffer
 
@@ -11,11 +11,12 @@ class EntriesBuilder
       val any = LogParser.any
       val entries = new ListBuffer[LogEntry]
       var lastWinner : LogParser = any
+      var correntIndex = 0
 
       var currentEntry = new LogEntry()
       for ( line <- text)
       {
-         val winner = parsers.collectFirst({case x if x.parse(line) != None => x}).get
+         val winner = parsers.collectFirst({case x if x.parse(line, 0) != None => x}).get
 
          val s: LogLine = if (winner == any)
          {
@@ -23,23 +24,27 @@ class EntriesBuilder
             {
                currentEntry = new LogEntry
                entries += currentEntry
-               any.parse(line).get
+               any.parse(line, 0).get
             }
-            else lastWinner.parseConsecuting(line) match {
-               case Some(lup) => lup
-               case _ =>
-                  lastWinner = any
-                  currentEntry = new LogEntry
-                  entries += currentEntry
-                  any.parse(line).get
+            else {
+               correntIndex = correntIndex + 1
+               lastWinner.parse(line, correntIndex) match {
+                  case Some(lup) => lup
+                  case _ =>
+                     lastWinner = any
+                     currentEntry = new LogEntry
+                     entries += currentEntry
+                     any.parse(line, 0).get
+               }
             }
          }
          else
          {
+            correntIndex = 0
             lastWinner = winner
             currentEntry = new LogEntry()
             entries += currentEntry
-            winner.parse(line).get
+            winner.parse(line, correntIndex).get
          }
          currentEntry.logLines += s
       }

@@ -1,9 +1,7 @@
-package vitrace.parsers
+package net.vitrace.parsers
 
-import com.digitaldoodles.rex.{Lit, Chars}
-import org.springframework.format.datetime.joda.DateTimeParser
-import org.joda.time.format.DateTimeFormat
-import java.util.Locale
+
+/*
 
 class Log4NetStandardParser extends LogParser
 {
@@ -44,18 +42,12 @@ class Log4NetStandardParser extends LogParser
       }
    }
 
-   def parse(s : String) : Option[LogLine]= {
-      parse(lineStandard,s )match {
-         case Success(lup,_) => Some(lup)
-         case x => None
-      }
-   }
 
-   def parseConsecuting(line: String) : Option[LogLine] =
-   {
-      parse(lineAny,line )match {
-         case Success(lup,_) => Some(lup)
-         case x => None
+   def parse(line : String, index : Int) : Option[LogLine]= {
+      index match {
+         case 0 => parse(lineStandard,line)
+         case _ => parse(lineAny,line)
       }
    }
 }
+*/

@@ -1,4 +1,4 @@
-package vitrace.parsers
+package net.vitrace.parsers
 
 import com.digitaldoodles.rex.Chars
 
@@ -12,25 +12,11 @@ class AnyParser extends LogParser
 
    case class LineSimple( message:String) extends LogLine
    {
-      override def toMap : Map[String, Any] =
-      {
-         Map(
-            "message" -> message
-         )
-      }
    }
 
-   def parse(s : String) : Option[LogLine]= {
-      parse(lineStandard2,s )match {
-         case Success(lup,_) => Some(lup)
-         case x => None
-      }
-   }
-   def parseConsecuting(line: String) : Option[LogLine] =
+   def parse(s : String, index:Int) : Option[LogLine]=
    {
-      parse(lineStandard2,line )match {
-         case Success(lup,_) => Some(lup)
-         case x => None
-      }
+      Some(parse(lineStandard2,s ).getOrElse(null))
    }
+
 }

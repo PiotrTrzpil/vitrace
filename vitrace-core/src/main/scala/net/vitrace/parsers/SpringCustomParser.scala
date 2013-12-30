@@ -1,14 +1,18 @@
-package vitrace.parsers
+package net.vitrace.parsers
 
 import com.digitaldoodles.rex.{CharSet, Chars, Lit}
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.LocalTime
 import vitrace.LogLevel
 import vitrace.LogLevel.LogLevel
+import org.slf4j.{LoggerFactory, Logger}
 
 
 class SpringCustomParser extends LogParser
 {
+   private val logger: Logger = LoggerFactory.getLogger(getClass)
+
+
    def testt = (Lit("[user:").<< +~ (Chars.Any *< 0) +~ Lit("]").>>).r
    def anyChars = (Chars.Any *> 0).r
    def anyCharsButBracket = ((Chars.Any - CharSet("]")) *> 0).r
@@ -39,7 +43,7 @@ class SpringCustomParser extends LogParser
    def parseLevel(level : String) = level match{
       case "DEBUG" => LogLevel.Debug
       case "INFO" => LogLevel.Info
-      case "WARN" => LogLevel.Warning
+      case "WARN" => LogLevel.Warn
       case "ERROR" => LogLevel.Error
       case "TRACE" => LogLevel.Trace
    }
@@ -59,17 +63,25 @@ class SpringCustomParser extends LogParser
       }
    }
 
-   def parse(s : String) : Option[LogLine]= {
-      parse(lineStandard2,s )match {
-         case Success(lup,_) => Some(lup)
-         case x => None
-      }
-   }
-   def parseConsecuting(line: String) : Option[LogLine] =
+   def parse(line : String, index : Int) : Option[LogLine]=
    {
-      parse(lineAny,line )match {
-         case Success(lup,_) => Some(lup)
-         case x => None
+      try
+      {
+         index match
+         {
+            case 0 => Some(parse(lineStandard2,line).getOrElse(null))
+            case _ => Some(parse(lineAny,line).getOrElse(null))
+         }
       }
+      catch
+         {
+            case e: MatchError =>
+               logger.warn("Illegal level string while parsing.", e)
+               None
+            case e: IllegalArgumentException =>
+               logger.warn("Illegal time while parsing.", e)
+               None
+         }
    }
+
 }

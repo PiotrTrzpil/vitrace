@@ -1,4 +1,4 @@
-package vitrace.parsers
+package net.vitrace.parsers
 
 import scala.collection.mutable.ListBuffer
 

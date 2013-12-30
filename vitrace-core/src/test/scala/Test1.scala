@@ -1,8 +1,8 @@
+import net.vitrace.parsers._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
 
-import vitrace.parsers._
 import scala.language.experimental.macros
 
 
@@ -19,18 +19,10 @@ import scala.util.parsing.combinator.RegexParsers
 class Test1 extends FunSuite with RegexParsers
 {
 
-   case class Line4(message : String) extends LogLine
-   {
-      override def toMap : Map[String, Any] =
-      {
-         Map(
-            "message" -> message
-         )
-      }
-   }
+
    test("t2")
    {
-      val s = new Log4NetStandardParser()
+     // val s = new Log4NetStandardParser()
       val o = new SpringCustomParser
       val any = new AnyParser()
       val lines: List[String] = List("DEBUG [1] - 2013-10-24 19:44:23,305  1730ms Infrastructure.TraceAttribute sdnadnas",
@@ -46,12 +38,16 @@ class Test1 extends FunSuite with RegexParsers
 "sie 09, 2013 5:16:45 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc",
 "SEVERE: The web application [/cms-front] registered the JDBC driver [com.mysql.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered."
 )
-      val l: List[LogParser] = List(s,o, LogParser.any)
+      val l: List[LogParser] = List(o, LogParser.any)
       val builder = new EntriesBuilder
       println(builder.parseText(lines, l))
 
 
    }
+
+   case class Line4(message : String) extends LogLine
+
+
    test("t22")
    {
      val e1 = new LogEntry()
