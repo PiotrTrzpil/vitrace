@@ -3,9 +3,9 @@ package net.vitrace.parsers
 import com.digitaldoodles.rex.{CharSet, Chars, Lit}
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.LocalTime
-import vitrace.LogLevel
-import vitrace.LogLevel.LogLevel
 import org.slf4j.{LoggerFactory, Logger}
+import net.vitrace.LogLevel.LogLevel
+import net.vitrace.LogLevel
 
 
 class SpringCustomParser extends LogParser
@@ -28,17 +28,6 @@ class SpringCustomParser extends LogParser
      { case logLevel~time~loggerName~ip~user~message => LineFull(parseLevel(logLevel), timeFormat.parseLocalTime(time), loggerName, ip, user, message) }
 
    case class LineFull(level: LogLevel, time:LocalTime, loggerName:String, ip:String, user:String, message:String) extends LogLine
-   {
-      override def toMap : Map[String, Any] =
-      {
-         Map(
-            "logLevel" -> level,
-            "time" -> time,
-            "loggerName" -> loggerName,
-            "message" -> message
-         )
-      }
-   }
 
    def parseLevel(level : String) = level match{
       case "DEBUG" => LogLevel.Debug
@@ -54,14 +43,6 @@ class SpringCustomParser extends LogParser
      { case message => LineBasic(message) }
 
    case class LineBasic( message:String) extends LogLine
-   {
-      def toMap =
-      {
-         Map(
-            "message" -> message
-         )
-      }
-   }
 
    def parse(line : String, index : Int) : Option[LogLine]=
    {

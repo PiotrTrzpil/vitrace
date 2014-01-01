@@ -1,5 +1,4 @@
-package vitrace
-
+package net.vitrace
 
 class LogLinePartsComposer()
 {

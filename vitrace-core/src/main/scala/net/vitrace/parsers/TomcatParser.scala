@@ -3,10 +3,10 @@ package net.vitrace.parsers
 import com.digitaldoodles.rex.{Chars, Lit}
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.DateTime
-import vitrace.LogLevel
-import vitrace.LogLevel.LogLevel
 import java.util.Locale
 import org.slf4j.{LoggerFactory, Logger}
+import net.vitrace.LogLevel.LogLevel
+import net.vitrace.LogLevel
 
 class TomcatParser extends LogParser
 {

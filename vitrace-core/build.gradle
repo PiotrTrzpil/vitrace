@@ -3,7 +3,7 @@
 apply plugin: 'scala'
 apply plugin:'application'
 
-mainClassName = "pt.Start"
+mainClassName = "net.vitrace.Start"
 
 compileScala {
   //  scalaCompileOptions.useCompileDaemon = true

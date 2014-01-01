@@ -1,10 +1,9 @@
-package vitrace
+package net.vitrace
 
 import java.awt.Dimension
 import scala.swing.{MainFrame, SwingApplication}
 import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.context.support.ClassPathXmlApplicationContext
-import net.vitrace.Tet
 
 
 object Start extends SwingApplication
@@ -37,10 +36,10 @@ object Start extends SwingApplication
 
       logger.info("Spring context initialized.");
 
-      val config = applicationContext.getBean("myConfiguration").asInstanceOf[MyConfiguration];
-      val tet = applicationContext.getBean("tet").asInstanceOf[Tet];
-      tet.sds()
-      config.gdad()
+      //val config = applicationContext.getBean("myConfiguration").asInstanceOf[MyConfiguration];
+   //   val tet = applicationContext.getBean("tet").asInstanceOf[Tet];
+   //   tet.sds()
+    //  config.gdad()
       //applicationContext.getBean();
   //    Message message = (Message) applicationContext.getBean("message");
 

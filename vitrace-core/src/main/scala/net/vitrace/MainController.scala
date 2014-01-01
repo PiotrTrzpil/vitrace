@@ -1,4 +1,4 @@
-package vitrace
+package net.vitrace
 
 import org.slf4j.{LoggerFactory, Logger}
 
