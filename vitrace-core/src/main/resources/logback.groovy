@@ -45,6 +45,6 @@ def setupAppenders()
 
 //, ['systemOut','logfile']
 root(TRACE)
-logger('pt', TRACE, ['logfile','systemOut'])
+logger('net.vitrace', TRACE, ['logfile','systemOut'])
 logger("org.springframework", TRACE, ['logfile','systemOut'])
 

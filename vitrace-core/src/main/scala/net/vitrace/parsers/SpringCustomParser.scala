@@ -29,6 +29,11 @@ class SpringCustomParser extends LogParser
 
    case class LineFull(level: LogLevel, time:LocalTime, loggerName:String, ip:String, user:String, message:String) extends LogLine
 
+   def lineAny = anyChars ^^
+     { case message => LineBasic(message) }
+
+   case class LineBasic( message:String) extends LogLine
+
    def parseLevel(level : String) = level match{
       case "DEBUG" => LogLevel.Debug
       case "INFO" => LogLevel.Info
@@ -39,10 +44,7 @@ class SpringCustomParser extends LogParser
 
    val timeFormat = DateTimeFormat.forPattern("HH:mm:ss.SSS")
 
-   def lineAny = anyChars ^^
-     { case message => LineBasic(message) }
 
-   case class LineBasic( message:String) extends LogLine
 
    def parse(line : String, index : Int) : Option[LogLine]=
    {

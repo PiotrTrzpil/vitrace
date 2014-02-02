@@ -1,9 +1,10 @@
 package net.vitrace
 
-import java.awt.Dimension
-import scala.swing.{MainFrame, SwingApplication}
 import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.context.support.ClassPathXmlApplicationContext
+import scala.swing._
+import scala.swing.event.ButtonClicked
+import javax.swing.UIManager
 
 
 object Start extends SwingApplication
@@ -15,30 +16,43 @@ object Start extends SwingApplication
 
    private val mainPanel = new MainPanel
    private val controller = new MainController(mainPanel)
-
    private def top = new MainFrame
    {
-      title = "Charactor Simulation"
-      contents = mainPanel;
+      title = "Vitrace"
+      contents = mainPanel
       size = new Dimension(1010, 610)
+      menuBar = new MenuBar()
+      {
+         contents += new Menu("File")
+         {
+            contents += new MenuItem("Open...")
+            {
+               reactions += {
+                  case ButtonClicked(event) =>
+                     controller.openFile()
+               }
+            }
+         }
+      }
    }
 
    override def startup(args: Array[String])
    {
 
-      logger.debug("starting the app");
+      logger.debug("starting the app")
     //  controller.start();
     //  mainPanel.beginDrawing();
 
+      UIManager.setLookAndFeel(
+         UIManager.getSystemLookAndFeelClassName)
 
+      val applicationContext = new ClassPathXmlApplicationContext("/applicationContext.xml")
 
-      val applicationContext = new ClassPathXmlApplicationContext("/applicationContext.xml");
-
-      logger.info("Spring context initialized.");
+      logger.info("Spring context initialized.")
 
       //val config = applicationContext.getBean("myConfiguration").asInstanceOf[MyConfiguration];
-   //   val tet = applicationContext.getBean("tet").asInstanceOf[Tet];
-   //   tet.sds()
+      val tet = applicationContext.getBean("tet").asInstanceOf[Tet]
+      tet.sds()
     //  config.gdad()
       //applicationContext.getBean();
   //    Message message = (Message) applicationContext.getBean("message");
@@ -46,12 +60,11 @@ object Start extends SwingApplication
     //  logger.debug("message='" + message.getMessage() + "'");
       som()
 
-      val mainController = new MainController(null)
-      
+
       top.pack()
       top.visible = true
 
-      mainController.run()
+      controller.run()
    }
 
    def som()

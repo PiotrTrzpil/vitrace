@@ -1,12 +1,16 @@
 package net.vitrace
 
 import scala.swing._
+import java.awt.Color
+import scala.swing.Dimension
+import net.vitrace.parsers.LogEntry
 
 class MainPanel extends BoxPanel(Orientation.Vertical)
 {
-   def width = 1000
+   def width = 400
    def height = 600
 
+   background = Color.BLUE
    preferredSize = new Dimension(width, height)
 
    /*contents = {
@@ -19,15 +23,16 @@ class MainPanel extends BoxPanel(Orientation.Vertical)
       JMenuItem eMenuItem = new JMenuItem("Exit", icon);
    }*/
 
-   contents += new MenuBar()
-   {
-      contents += new Menu("File")
-   }
+ //  contents +=
 
    override def paintComponent(g:Graphics2D)
    {
       super.paintComponent(g)
    }
 
-
+   def createBox( e : LogEntry)
+   {
+      contents += new EntryBox
+      contents += new Button("sds")
+   }
 }
