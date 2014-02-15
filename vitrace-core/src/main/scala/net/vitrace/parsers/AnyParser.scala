@@ -1,6 +1,7 @@
 package net.vitrace.parsers
 
 import com.digitaldoodles.rex.Chars
+import pt.LogLine
 
 
 class AnyParser extends LogParser

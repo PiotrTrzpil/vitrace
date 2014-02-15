@@ -7,6 +7,7 @@ import java.util.Locale
 import org.slf4j.{LoggerFactory, Logger}
 import net.vitrace.LogLevel.LogLevel
 import net.vitrace.LogLevel
+import pt.LogLine
 
 class TomcatParser extends LogParser
 {

@@ -3,6 +3,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
 
+import pt.LogLine
 import scala.language.experimental.macros
 
 
@@ -48,6 +49,14 @@ class Test1 extends FunSuite with RegexParsers
 
    case class Line4(message : String) extends LogLine
 
+   test("asMap")
+   {
+      val sd : LogLine = Line4("tada")
+      val line = sd
+      val map = line.toMap
+      assert(map.isEmpty === false)
+
+   }
 
    test("t22")
    {

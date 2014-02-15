@@ -1,6 +1,7 @@
 package net.vitrace.parsers
 
 import scala.collection.mutable.ListBuffer
+import pt.LogLine
 
 class LogEntry()
 {

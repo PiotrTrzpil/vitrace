@@ -6,6 +6,7 @@ import org.joda.time.LocalTime
 import org.slf4j.{LoggerFactory, Logger}
 import net.vitrace.LogLevel.LogLevel
 import net.vitrace.LogLevel
+import pt.LogLine
 
 
 class SpringCustomParser extends LogParser

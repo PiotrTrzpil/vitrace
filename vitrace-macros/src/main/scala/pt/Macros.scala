@@ -1,7 +1,7 @@
 package pt
 
 import scala.language.experimental.macros
-
+/*
 object Macros {
    import scala.reflect.macros.Context
 
@@ -21,7 +21,7 @@ object Macros {
       c.Expr[Map[String, Any]](Apply(mapApply, pairs.toList))
    }
 }
-/*object Macros
+object Macros
 {
 
    def getMap_impl[T: c.WeakTypeTag](c: Context): c.Expr[Map[String, Any]] = {

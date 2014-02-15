@@ -1,15 +1,12 @@
-import com.digitaldoodles.rex.CharRange
-import com.digitaldoodles.rex.CharRange
-import net.vitrace.parsers._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
 
+import pt.LogLine
 import scala.language.experimental.macros
 
 
 // This imports the basic constructors and predefined patterns.
-import com.digitaldoodles.rex._
 
 import scala.util.parsing.combinator.RegexParsers
 // This imports a single (as of Rex 0,7) implicit conversion that allows strings to be used
@@ -25,11 +22,11 @@ class LogLineTest extends FunSuite with RegexParsers
 
    test("merge")
    {
-      //val logLine = LineT1("mess") merge LineT2("n")
-      val dd = LineT1("mess").asMap
-      assert(LineT1("mess").asMap.get("message") === Some("mess"))
-     // assert(logLine.asMap.get("message") === Some("mess"))
-     // assert(logLine.asMap.get("notes") === Some("n"))
+      val logLine = LineT1("mess") merge LineT2("n")
+      val dd = LineT1("mess").toMap
+      assert(LineT1("mess").toMap.get("message") === Some("mess"))
+      assert(logLine.toMap.get("message") === Some("mess"))
+      assert(logLine.toMap.get("notes") === Some("n"))
    }
 
 

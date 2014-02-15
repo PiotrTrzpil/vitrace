@@ -1,22 +1,27 @@
 package net.vitrace.parsers
 
 import scala.collection.mutable.ListBuffer
+import pt.{EmptyLine, LogLine}
 
 class EntriesBuilder
 {
    def and(x:Boolean,y:Boolean) : Boolean = if(x) y else false
 
 
-//   def ss(lines : List[String], index: Int, parser : LogParser) : List[LogLine]= lines match {
-//      case a :: ax => parser.parse(a, index) match {
-//         case Some(logline) => logline merge ss(ax, index+1, parser)
-//      }
-//   }
-//
-//   def parseText2(lines : List[String], parsers: List[LogParser]) : Seq[LogEntry] =
-//   {
-//      val winner = parsers.collectFirst({case x if x.parse(lines.head, 0) != None => x}).get
-//   }
+   def scanLines(lines : List[String], index: Int, parser : LogParser) : LogLine = lines match {
+
+      case List() =>
+      case a :: ax => parser.parse(a, index) match {
+         case Some(logline) => logline merge scanLines(ax, index+1, parser)
+         case None => EmptyLine
+      }
+
+   }
+
+   def parseText2(lines : List[String], parsers: List[LogParser]) : Seq[LogEntry] =
+   {
+      val winner = parsers.collectFirst({case x if x.parse(lines.head, 0) != None => x}).get
+   }
 
    def parseText(text : List[String], parsers: List[LogParser]) : Seq[LogEntry] =
    {
