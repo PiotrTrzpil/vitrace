@@ -47,7 +47,13 @@ class Test1 extends FunSuite with RegexParsers
 
    case class Line4(message : String) extends LogLine
 
+   test("asMap")
+   {
+      val line = Line4("tada")
+      val map = line.asMap
+      assert(map.isEmpty === false)
 
+   }
    test("t22")
    {
      val e1 = new LogEntry()
