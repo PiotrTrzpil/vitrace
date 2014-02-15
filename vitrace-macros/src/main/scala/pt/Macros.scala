@@ -1,9 +1,29 @@
-package net.vitrace
+package pt
 
-object Macros
-{
-   import scala.language.experimental.macros
+import scala.language.experimental.macros
+
+object Macros {
    import scala.reflect.macros.Context
+
+   def asMap_impl[T: c.WeakTypeTag](c: Context) = {
+      import c.universe._
+
+      val mapApply = Select(reify(Map).tree, newTermName("apply"))
+      val model = Select(c.prefix.tree, newTermName("model"))
+
+      val pairs = weakTypeOf[T].declarations.collect {
+         case m: MethodSymbol if m.isCaseAccessor =>
+            val name = c.literal(m.name.decoded)
+            val value = c.Expr(Select(model, m.name))
+            reify(name.splice -> value.splice).tree
+      }
+
+      c.Expr[Map[String, Any]](Apply(mapApply, pairs.toList))
+   }
+}
+/*object Macros
+{
+
    def getMap_impl[T: c.WeakTypeTag](c: Context): c.Expr[Map[String, Any]] = {
       import c.universe._
 
@@ -38,3 +58,4 @@ object Macros
       c.Expr[Map[String, Any]](c.parse(mappings.toString))
    }
 }
+*/

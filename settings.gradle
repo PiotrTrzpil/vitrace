@@ -1,1 +1,1 @@
-include 'rex-master', 'vitrace-core'
+include 'rex-master', 'vitrace-core' , 'vitrace-macros'

@@ -40,7 +40,8 @@ class Test1 extends FunSuite with RegexParsers
 )
       val l: List[LogParser] = List(o, LogParser.any)
       val builder = new EntriesBuilder
-      println(builder.parseText(lines, l))
+      val entries = builder.parseText(lines, l)
+      println(entries)
 
 
    }

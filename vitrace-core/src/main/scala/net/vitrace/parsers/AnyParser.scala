@@ -19,4 +19,5 @@ class AnyParser extends LogParser
       Some(parse(lineStandard2,s ).getOrElse(null))
    }
 
+   val spanSize = 1
 }

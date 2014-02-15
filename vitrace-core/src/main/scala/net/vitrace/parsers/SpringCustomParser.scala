@@ -12,6 +12,7 @@ class SpringCustomParser extends LogParser
 {
    private val logger: Logger = LoggerFactory.getLogger(getClass)
 
+   val spanSize = 1
 
    def testt = (Lit("[user:").<< +~ (Chars.Any *< 0) +~ Lit("]").>>).r
    def anyChars = (Chars.Any *> 0).r
@@ -52,8 +53,8 @@ class SpringCustomParser extends LogParser
       {
          index match
          {
-            case 0 => Some(parse(lineStandard2,line).getOrElse(null))
-            case _ => Some(parse(lineAny,line).getOrElse(null))
+            case 0 => toOption(parse(lineStandard2,line))
+            case _ => toOption(parse(lineAny,line))
          }
       }
       catch

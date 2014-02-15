@@ -12,6 +12,8 @@ class TomcatParser extends LogParser
 {
    private val logger: Logger = LoggerFactory.getLogger(getClass)
 
+   val spanSize = 2
+
    def anyChars = (Chars.Any *> 0).r
    def anyCharsEndingWithPMorAM =  ((Chars.Any *< 1) +~ (Lit("AM")|Lit("PM"))).r
    def alphanumerics = (Chars.Alphabetic *> 1).r
@@ -50,7 +52,6 @@ class TomcatParser extends LogParser
          index match {
             case 0 => Some(parse(lineFirst,line).getOrElse(null))
             case 1 => Some(parse(lineSecond,line).getOrElse(null))
-            case _ => Some(parse(lineAny,line).getOrElse(null))
          }
       }
       catch {

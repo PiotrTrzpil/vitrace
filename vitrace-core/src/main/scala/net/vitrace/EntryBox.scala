@@ -10,9 +10,6 @@ class EntryBox extends BoxPanel(Orientation.Vertical)
    border = new BevelBorder(BevelBorder.RAISED)
    background = Color.GREEN
 
-   if()
-   {
 
-   }
 
 }
