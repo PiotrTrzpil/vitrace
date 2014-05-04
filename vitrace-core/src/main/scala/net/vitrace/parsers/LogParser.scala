@@ -7,7 +7,7 @@ import scalaz.Scalaz._
 
 object LogParser
 {
-   val anyParser = new AnyParser
+   val anyParser = new RawFallbackParser
    def any = anyParser
 }
 
@@ -38,6 +38,15 @@ trait LogParser extends RegexParsers
     }
     else None
 
+  }
+
+
+
+  override def hashCode() = id.hashCode()
+
+  override def equals(obj: scala.Any) = obj match {
+    case that: LogParser => that.id.equals(this.id)
+    case _ => false
   }
 
   override def toString = id

@@ -4,7 +4,7 @@ import net.vitrace.parsers.{LogLine, LogParser, ParsingContinuation, ParseSucces
 
 case class ParseLineState(groups:Vector[LineGroup]){
 
-  def parserLineCounts = groups.map(g =>(g.parser, g.logLines.length))
+
  // def merge(other:ParseLineState) =
 }
 

@@ -5,7 +5,7 @@ import net.vitrace.parsers
 import scalaz.Scalaz
 import Scalaz._
 
-class AnyParser extends LogParser
+class RawFallbackParser extends LogParser
 {
   val id = "Any"
 

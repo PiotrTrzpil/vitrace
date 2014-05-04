@@ -1,19 +1,12 @@
 package net.vitrace.parsers
 
-import net.vitrace.parsers._
 import org.scalatest.FunSuite
 
-import scala.language.experimental.macros
 
 
-// This imports the basic constructors and predefined patterns.
 import com.digitaldoodles.rex._
 
 import scala.util.parsing.combinator.RegexParsers
-// This imports a single (as of Rex 0,7) implicit conversion that allows strings to be used
-// as literals in Rex expressions.
-//import com.digitaldoodles.rex.Implicits._
-// This imports objects that contain further predefined patterns; see the API documentation for details.
 
 class Test1 extends FunSuite with RegexParsers
 {
@@ -35,16 +28,7 @@ class Test1 extends FunSuite with RegexParsers
 
    }
 
-   test("t22")
-   {
-     val e1 = new LogEntry()
-      e1.logLines += new Line4("tada")
-      e1.logLines += new Line4("rgsfse")
-      val e2 = new LogEntry()
-      e2.logLines += new Line4("tada")
-      e2.logLines += new Line4("rgsfse")
-     val entries = List()
-   }
+
    test("t3")
    {
       // *>1 means 1 or more, greedily (as many times as possible.)

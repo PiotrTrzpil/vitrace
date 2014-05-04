@@ -2,25 +2,19 @@ package net.vitrace.parsers
 
 import scala.language.experimental.macros
 import org.scalatest.FunSuite
-import net.vitrace.parsers.mapper.{ParseLineState, Mapper}
+import net.vitrace.parsers.mapper.{RawLinesMerger, LineGroup, ParseLineState, ParsingProcessor}
 
 
 // This imports the basic constructors and predefined patterns.
 
 import scala.util.parsing.combinator.RegexParsers
-// This imports a single (as of Rex 0,7) implicit conversion that allows strings to be used
-// as literals in Rex expressions.
-//import com.digitaldoodles.rex.Implicits._
-// This imports objects that contain further predefined patterns; see the API documentation for details.
-
-class MapperTest extends FunSuite with RegexParsers
+import scala.io.Source
+class ParsingProcessorTest extends FunSuite with RegexParsers
 {
 
-  test("t2")
+  test("basic e2e test")
   {
 
-    val spring = new SpringCustomParser
-    val tomcat = new TomcatParser
     val lines: List[String] = List(
       "INFO  15:18:14.797 o.s.s.c.SpringSecurityCoreVersion [ip:123] [user:dd] - You are running with Spring Security Core 3.1.4.RELEASE",
       "sie 09, 2013 5:16:45 PM org.apache.catalina.startup.HostConfig deleteRedeployResources",
@@ -34,17 +28,42 @@ class MapperTest extends FunSuite with RegexParsers
       "sie 09, 2013 5:16:45 PM org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc",
       "SEVERE: The web application [/cms-front] registered the JDBC driver [com.mysql.jdbc.Driver] but failed to unregister it."
     )
+    val spring = new SpringCustomParser
+    val tomcat = new TomcatParser
     val parsers: Stream[LogParser] = Stream(spring, tomcat, LogParser.any)
-    val mapper = new Mapper(parsers)
+    val mapper = new ParsingProcessor(parsers)
     val res = lines.map(mapper.map)
 
 
-    println(res.map(s => s.groups.head.parser))
+    println(res.zipWithIndex.map{case (groups, i) => (1+i)+": "+groups.head.parser+"\n"}.mkString)
 
     val red = res.reduce(mapper.reduce)
-    println(red.parserLineCounts)
+    println(parserLineCounts(red).map{case (p, count) => s"$p:$count"+("\n"*count)}.mkString)
+  }
 
+  test("file e2e test")
+  {
+
+    val file = "C:\\PLIKI\\Programowanie\\Scala\\vitrace-testy\\catalina.txt"
+    val lines = Source.fromFile(file).getLines().toVector
+
+    val spring = new SpringCustomParser
+    val tomcat = new TomcatParser
+    val parsers: Stream[LogParser] = Stream(spring, tomcat, LogParser.any)
+    val mapper = new ParsingProcessor(parsers)
+
+
+    val res = lines.map(mapper.map)
+    println(res.zipWithIndex.map{case (s, i) => (1+i)+": "+s.head.parser+"\n"}.mkString)
+
+    val red = res.reduce(mapper.reduce)
+    println(parserLineCounts(red).map{case (p, count) => s"$p:$count"+("\n"*count)}.mkString)
+
+    val merger = new RawLinesMerger()
+    val red2 = red.map(merger.map).reduce(merger.reduce)
+    println(parserLineCounts(red2).map{case (p, count) => s"$p:$count"+("\n"*count)}.mkString)
 
   }
 
+  def parserLineCounts(groups:Vector[LineGroup]) = groups.map(g =>(g.parser, g.logLines.length))
 }

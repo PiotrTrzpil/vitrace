@@ -2,16 +2,12 @@ package net.vitrace.parsers
 
 import scala.language.experimental.macros
 import org.scalatest.FunSuite
-import net.vitrace.parsers.mapper.{Mapper, ParseLineState}
+import net.vitrace.parsers.mapper.{ParsingProcessor, ParseLineState}
 
 
 // This imports the basic constructors and predefined patterns.
 
 import scala.util.parsing.combinator.RegexParsers
-// This imports a single (as of Rex 0,7) implicit conversion that allows strings to be used
-// as literals in Rex expressions.
-//import com.digitaldoodles.rex.Implicits._
-// This imports objects that contain further predefined patterns; see the API documentation for details.
 
 class SpringCustomParserTest extends FunSuite with RegexParsers
 {
