@@ -1,7 +1,7 @@
 package com.digitaldoodles.rex
 
 import util.matching.Regex
-import annotation.target
+//import annotation.target
 
 /** Represents the result of a match. This can either be a successful or unsuccessful match,
  * which permits MatchResults to return the strings "between" the matches when iterating a

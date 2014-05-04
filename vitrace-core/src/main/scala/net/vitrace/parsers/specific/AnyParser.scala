@@ -1,11 +1,14 @@
 package net.vitrace.parsers
 
 import com.digitaldoodles.rex.Chars
-import pt.LogLine
-
+import net.vitrace.parsers
+import scalaz.Scalaz
+import Scalaz._
 
 class AnyParser extends LogParser
 {
+  val id = "Any"
+
    def anyChars = (Chars.Any *> 0).r
 
    def lineStandard2 = anyChars ^^
@@ -13,11 +16,13 @@ class AnyParser extends LogParser
 
    case class LineSimple( message:String) extends LogLine
    {
+      def toMap = Map("message" -> message)
+
    }
 
-   def parse(s : String, index:Int) : Option[LogLine]=
+   def parse(line : String, index:Int) : ParseLineResult=
    {
-      Some(parse(lineStandard2,s ).getOrElse(null))
+      ParseSuccess(line,parse(lineStandard2,line ).get)
    }
 
    val spanSize = 1

@@ -6,13 +6,14 @@ import org.joda.time.LocalTime
 import org.slf4j.{LoggerFactory, Logger}
 import net.vitrace.LogLevel.LogLevel
 import net.vitrace.LogLevel
-import pt.LogLine
+
 
 
 class SpringCustomParser extends LogParser
 {
    private val logger: Logger = LoggerFactory.getLogger(getClass)
 
+   val id = "SpringCustom"
    val spanSize = 1
 
    def testt = (Lit("[user:").<< +~ (Chars.Any *< 0) +~ Lit("]").>>).r
@@ -29,12 +30,13 @@ class SpringCustomParser extends LogParser
    def lineStandard2 = logLevel~time~clas~("[ip:"~>anyCharsButBracket<~"]")~(("[user:"~>anyCharsButBracket<~"]")<~"-")~anyChars ^^
      { case logLevel~time~loggerName~ip~user~message => LineFull(parseLevel(logLevel), timeFormat.parseLocalTime(time), loggerName, ip, user, message) }
 
-   case class LineFull(level: LogLevel, time:LocalTime, loggerName:String, ip:String, user:String, message:String) extends LogLine
+   case class LineFull(level: LogLevel, time:LocalTime, loggerName:String, ip:String,
+                       user:String, message:String) extends LogLine {
+      def toMap = Map("level" -> level, "time" -> time, "loggerName" -> loggerName, "ip" -> ip,
+         "user" -> user, "message" -> message)
+   }
 
-   def lineAny = anyChars ^^
-     { case message => LineBasic(message) }
 
-   case class LineBasic( message:String) extends LogLine
 
    def parseLevel(level : String) = level match{
       case "DEBUG" => LogLevel.Debug
@@ -48,24 +50,26 @@ class SpringCustomParser extends LogParser
 
 
 
-   def parse(line : String, index : Int) : Option[LogLine]=
+   def parse(line : String, index : Int) : ParseLineResult =
    {
       try
       {
          index match
          {
-            case 0 => toOption(parse(lineStandard2,line))
-            case _ => toOption(parse(lineAny,line))
+            case 0 =>
+              val parsed = parse(lineStandard2,line)
+              parsed match {
+                case x:Success[LogLine] =>ParseSuccess(line, x.result)
+                case f => ParseFailure(line, "No match")
+              }
          }
       }
       catch
          {
             case e: MatchError =>
-               logger.warn("Illegal level string while parsing.", e)
-               None
+              ParseFailure(line, e.getMessage())
             case e: IllegalArgumentException =>
-               logger.warn("Illegal time while parsing.", e)
-               None
+               ParseFailure(line, "Illegal time while parsing.")
          }
    }
 

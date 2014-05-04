@@ -7,12 +7,13 @@ import java.util.Locale
 import org.slf4j.{LoggerFactory, Logger}
 import net.vitrace.LogLevel.LogLevel
 import net.vitrace.LogLevel
-import pt.LogLine
+
 
 class TomcatParser extends LogParser
 {
    private val logger: Logger = LoggerFactory.getLogger(getClass)
 
+  val id = "Tomcat"
    val spanSize = 2
 
    def anyChars = (Chars.Any *> 0).r
@@ -28,12 +29,13 @@ class TomcatParser extends LogParser
    def lineSecond = (alphanumerics<~":")~anyChars ^^
      { case level~message => LineSecond(parseLevel(level), message) }
 
-   def lineAny = anyChars ^^
-     { case message => LineBasic(message) }
 
-   case class LineFirst( dateTime:DateTime, loggerName:String, methodName:String) extends LogLine
-   case class LineSecond( level:LogLevel, message:String) extends LogLine
-   case class LineBasic( message:String) extends LogLine
+   case class LineFirst( dateTime:DateTime, loggerName:String, methodName:String) extends LogLine {
+      def toMap = Map("dateTime" -> dateTime, "loggerName" -> loggerName, "methodName" -> methodName)
+   }
+   case class LineSecond( level:LogLevel, message:String) extends LogLine {
+      def toMap = Map("level" -> level, "message" -> message)
+   }
 
    val dateFormat = DateTimeFormat.forPattern("MMM dd, yyyy hh:mm:ss aa").withLocale(Locale.forLanguageTag("pl-PL"))
 
@@ -46,22 +48,26 @@ class TomcatParser extends LogParser
       case "SEVERE" => LogLevel.Error
    }
 
-   def parse(line : String, index : Int) : Option[LogLine] =
+
+   def parse(line : String, index : Int) : ParseLineResult =
    {
       try
       {
-         index match {
-            case 0 => Some(parse(lineFirst,line).getOrElse(null))
-            case 1 => Some(parse(lineSecond,line).getOrElse(null))
+         val res = index match {
+           case 0 => parse(lineFirst, line)
+           case 1 => parse(lineSecond, line)
+         }
+
+         res match {
+           case x:Success[LogLine] => ParseSuccess(line, x.result)
+           case f => ParseFailure(line, "No match")
          }
       }
       catch {
          case e:IllegalArgumentException =>
-            logger.warn("Illegal date while parsing.")
-            None
+            ParseFailure(line, "Illegal date while parsing.")
          case e: MatchError =>
-            logger.warn("Illegal level string while parsing.", e)
-            None
+            ParseFailure(line, e.getMessage())
       }
    }
 
