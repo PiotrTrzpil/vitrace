@@ -1,4 +1,5 @@
 Vitrace
+(using http://kenmcdonald.github.io/rex/ internally)
 =======
 (Incubating)
 
