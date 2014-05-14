@@ -1,7 +1,7 @@
 Vitrace
-(using http://kenmcdonald.github.io/rex/ internally)
 =======
 (Incubating)
+(using http://kenmcdonald.github.io/rex/ internally)
 
 A programmer tool for visualizing log files in order to improve bug tracking and monitoring of an application.
 It aims to improve log message visibility and ease of understanding complex events.
