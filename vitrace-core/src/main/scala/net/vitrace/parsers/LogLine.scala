@@ -2,7 +2,7 @@ package net.vitrace.parsers
 
 
 
-trait LogLine
+trait LogLine extends Serializable
 {
    def toMap: Map[String, Any]
 

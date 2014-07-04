@@ -1,7 +1,7 @@
 package net.vitrace.parsers
 
 
-trait ParseLineResult {
+trait ParseLineResult extends Serializable{
 
 }
 

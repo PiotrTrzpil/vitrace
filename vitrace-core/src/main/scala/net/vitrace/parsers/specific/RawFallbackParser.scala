@@ -11,19 +11,15 @@ class RawFallbackParser extends LogParser
 
    def anyChars = (Chars.Any *> 0).r
 
-   def lineStandard2 = anyChars ^^
+   def lineStandard = anyChars ^^
      { case message => LineSimple(message) }
 
    case class LineSimple( message:String) extends LogLine
    {
       def toMap = Map("message" -> message)
-
    }
 
-   def parse(line : String, index:Int) : ParseLineResult=
-   {
-      ParseSuccess(line,parse(lineStandard2,line ).get)
-   }
-
+   val linesDeclaration = Vector(lineStandard)
    val spanSize = 1
+   override def createNew() = new RawFallbackParser
 }

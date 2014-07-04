@@ -3,7 +3,7 @@ package net.vitrace.parsers
 import scala.language.experimental.macros
 import scala.util.parsing.combinator.RegexParsers
 import scalaz.Scalaz._
-
+import scala.util.parsing.combinator.Parsers
 
 object LogParser
 {
@@ -11,16 +11,16 @@ object LogParser
    def any = anyParser
 }
 
-trait LogParser extends RegexParsers
+trait LogParser extends RegexParsers with Serializable
 {
    val id : String
    val spanSize : Int
-   def parse(line : String, index : Int) : ParseLineResult
+   val linesDeclaration : Vector[Parser[LogLine]]
 
    def toOption[T](result : ParseResult[T]) : Option[T] = {
       Option.apply(result.getOrElse[T](null.asInstanceOf[T]))
    }
-
+  def createNew() : LogParser
   def parse(line : String) = createFirstContinuation.parse(line)
 
   def createFirstContinuation : ParsingContinuation = createContinuation(0).get
@@ -29,7 +29,7 @@ trait LogParser extends RegexParsers
     if (i < spanSize) {
       new ParsingContinuation {
         def parse(line: String) = {
-          LogParser.this.parse(line, i) match {
+          createNew().parse(line, i) match {
             case succ : ParseSuccess => (succ, createContinuation(i + 1))
             case x : ParseFailure => (x, None)
           }
@@ -40,7 +40,15 @@ trait LogParser extends RegexParsers
 
   }
 
+  def parse(line : String, index : Int) : ParseLineResult =
+  {
+    val res = parse(linesDeclaration(index), line)
 
+    res match {
+      case x:Success[LogLine] => ParseSuccess(line, x.result)
+      case f => ParseFailure(line, "No match")
+    }
+  }
 
   override def hashCode() = id.hashCode()
 

@@ -6,13 +6,16 @@ import org.joda.time.LocalTime
 import org.slf4j.{LoggerFactory, Logger}
 import net.vitrace.LogLevel.LogLevel
 import net.vitrace.LogLevel
-
-
+import org.parboiled.scala.Parser
+import sun.org.mozilla.javascript.internal.ast.AstNode
+import org.parboiled.errors._
+import org.apache.avro.data.Json
+import org.parboiled.scala.rules.Rule0
+import scala.xml.dtd.ANY
+import org.parboiled.scala._
 
 class SpringCustomParser extends LogParser
 {
-   private val logger: Logger = LoggerFactory.getLogger(getClass)
-
    val id = "SpringCustom"
    val spanSize = 1
 
@@ -27,50 +30,64 @@ class SpringCustomParser extends LogParser
    def ip = (Lit("[ip:").<< +~ (Chars.Any*< 0) +~ Lit("]").>>).r
 
    //INFO  15:18:14.797 o.s.s.c.SpringSecurityCoreVersion [ip:123] [user:] - You are running with Spring Security Core 3.1.4.RELEASE
-   def lineStandard2 = logLevel~time~clas~("[ip:"~>anyCharsButBracket<~"]")~(("[user:"~>anyCharsButBracket<~"]")<~"-")~anyChars ^^
-     { case logLevel~time~loggerName~ip~user~message => LineFull(parseLevel(logLevel), timeFormat.parseLocalTime(time), loggerName, ip, user, message) }
+   def lineStandard = logLevel~time~clas~("[ip:"~>anyCharsButBracket<~"]")~(("[user:"~>anyCharsButBracket<~"]")<~"-")~anyChars ^^
+     { case logLevel~time~loggerName~ip~user~message => LineFull(logLevel, time, loggerName, ip, user, message) }
 
-   case class LineFull(level: LogLevel, time:LocalTime, loggerName:String, ip:String,
+   case class LineFull(level: String, time:String, loggerName:String, ip:String,
                        user:String, message:String) extends LogLine {
       def toMap = Map("level" -> level, "time" -> time, "loggerName" -> loggerName, "ip" -> ip,
          "user" -> user, "message" -> message)
    }
 
+   val linesDeclaration = Vector(lineStandard)
+  override def createNew() = new SpringCustomParser
+}
 
+class SpringCustomParser2 extends Parser
+{
 
-   def parseLevel(level : String) = level match{
-      case "DEBUG" => LogLevel.Debug
-      case "INFO" => LogLevel.Info
-      case "WARN" => LogLevel.Warn
-      case "ERROR" => LogLevel.Error
-      case "TRACE" => LogLevel.Trace
-   }
+  sealed abstract class AstNode
+  case class ObjectNode(members: List[MemberNode]) extends AstNode
+  case class MemberNode(key: String, value: AstNode) extends AstNode
+  case class ArrayNode(elements: List[AstNode]) extends AstNode
+  case class StringNode(text: String) extends AstNode
+  case class NumberNode(value: BigDecimal) extends AstNode
+  case object True extends AstNode
+  case object False extends AstNode
+  case object Null extends AstNode
 
-   val timeFormat = DateTimeFormat.forPattern("HH:mm:ss.SSS")
+  // the root rule
+  def Json = rule { WhiteSpace }
 
+//  def Text = rule { "\"" ~ zeroOrMore(Character) ~> StringNode ~ "\" " }
+//
+//// def Mdc = rule { "[ " ~ Text ~ ":" ~ "] " ~~> ArrayNode }
+//
+//
+//  def Character = rule { EscapedChar | NormalChar }
+//
+//  def EscapedChar = rule { "\\" ~ (anyOf("\"\\/bfnrt") | Unicode) }
+//
+//  def NormalChar = rule { !anyOf("\"\\") ~ ANY }
+//
+//  def Unicode = rule { "u" ~ HexDigit ~ HexDigit ~ HexDigit ~ HexDigit }
+//
+//  def HexDigit = rule { "0" - "9" | "a" - "f" | "A" - "Z" }
 
+  override implicit def toRule(string: String) =
+    if (string.endsWith(" "))
+      str(string.trim) ~ WhiteSpace
+    else
+      str(string)
 
-   def parse(line : String, index : Int) : ParseLineResult =
-   {
-      try
-      {
-         index match
-         {
-            case 0 =>
-              val parsed = parse(lineStandard2,line)
-              parsed match {
-                case x:Success[LogLine] =>ParseSuccess(line, x.result)
-                case f => ParseFailure(line, "No match")
-              }
-         }
-      }
-      catch
-         {
-            case e: MatchError =>
-              ParseFailure(line, e.getMessage())
-            case e: IllegalArgumentException =>
-               ParseFailure(line, "Illegal time while parsing.")
-         }
-   }
+  def WhiteSpace: Rule0 = rule { zeroOrMore(anyOf(" \n\r\t\f")) }
 
+  def parseJson(json: String): AstNode = {
+    val parsingResult = ReportingParseRunner(Json).run(json)
+    parsingResult.result match {
+      case Some(astRoot) => astRoot
+      case None => throw new ParsingException("Invalid JSON source:\n" +
+        ErrorUtils.printParseErrors(parsingResult))
+    }
+  }
 }

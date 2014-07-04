@@ -7,13 +7,12 @@ import java.util.Locale
 import org.slf4j.{LoggerFactory, Logger}
 import net.vitrace.LogLevel.LogLevel
 import net.vitrace.LogLevel
+import scala.util.parsing.combinator.RegexParsers
 
 
 class TomcatParser extends LogParser
 {
-   private val logger: Logger = LoggerFactory.getLogger(getClass)
-
-  val id = "Tomcat"
+   val id = "Tomcat"
    val spanSize = 2
 
    def anyChars = (Chars.Any *> 0).r
@@ -21,54 +20,25 @@ class TomcatParser extends LogParser
    def alphanumerics = (Chars.Alphabetic *> 1).r
    def nonWhitespace  = (Chars.NonWhitespace *> 1).r
 
+
    //"sie 09, 2013 5:16:45 PM org.apache.catalina.startup.HostConfig deleteRedeployResources",
    //"INFO: Undeploying context [/cms-front]",
    def lineFirst = anyCharsEndingWithPMorAM~nonWhitespace~nonWhitespace ^^
-     { case dateTime~loggerName~methodName => LineFirst(dateFormat.parseDateTime(dateTime), loggerName, methodName) }
+     { case dateTime~loggerName~methodName => LineFirst(dateTime, loggerName, methodName) }
 
    def lineSecond = (alphanumerics<~":")~anyChars ^^
-     { case level~message => LineSecond(parseLevel(level), message) }
+     { case level~message => LineSecond(level, message) }
 
 
-   case class LineFirst( dateTime:DateTime, loggerName:String, methodName:String) extends LogLine {
+
+   case class LineFirst( dateTime:String, loggerName:String, methodName:String) extends LogLine {
       def toMap = Map("dateTime" -> dateTime, "loggerName" -> loggerName, "methodName" -> methodName)
    }
-   case class LineSecond( level:LogLevel, message:String) extends LogLine {
+   case class LineSecond( level:String, message:String) extends LogLine {
       def toMap = Map("level" -> level, "message" -> message)
    }
 
-   val dateFormat = DateTimeFormat.forPattern("MMM dd, yyyy hh:mm:ss aa").withLocale(Locale.forLanguageTag("pl-PL"))
+   val linesDeclaration = Vector(lineFirst, lineSecond)
 
-   def parseLevel(level : String) = level match{
-      case "TRACE" => LogLevel.Trace
-      case "DEBUG" => LogLevel.Debug
-      case "INFO" => LogLevel.Info
-      case "WARN" => LogLevel.Warn
-      case "ERROR" => LogLevel.Error
-      case "SEVERE" => LogLevel.Error
-   }
-
-
-   def parse(line : String, index : Int) : ParseLineResult =
-   {
-      try
-      {
-         val res = index match {
-           case 0 => parse(lineFirst, line)
-           case 1 => parse(lineSecond, line)
-         }
-
-         res match {
-           case x:Success[LogLine] => ParseSuccess(line, x.result)
-           case f => ParseFailure(line, "No match")
-         }
-      }
-      catch {
-         case e:IllegalArgumentException =>
-            ParseFailure(line, "Illegal date while parsing.")
-         case e: MatchError =>
-            ParseFailure(line, e.getMessage())
-      }
-   }
-
+  override def createNew() = new TomcatParser
 }
