@@ -1,9 +1,6 @@
 package reactive.hide
 
-import reactive.socket.ReactiveServer
 import akka.actor._
-import org.java_websocket.WebSocket
-import scala.collection._
 import reactive.find.AggregateClient.{SendToAll, SendToOne, NewConnection, Subscribe}
 
 object HideActor {
@@ -20,7 +17,7 @@ class HideActor(clientHandler : ActorRef) extends Actor with ActorLogging {
   override def receive = {
     case NewConnection(id) => {
        logLines.foreach{ line =>
-          clientHandler ! SendToOne(id, line)
+          clientHandler ! SendToOne( line)
        }
     }
     case LoadLog(lines) => {
