@@ -1,17 +1,12 @@
 package reactive.api
 
-import reactive.find.AggregateClient
-import reactive.hide.HideActor
-
-import akka.actor.Props
-import reactive.hide.HideActor.LoadLog
 import scala.io.BufferedSource
 
 trait MainActors {
   this: AbstractSystem =>
 
-  lazy val find = system.actorOf(Props[AggregateClient], "find")
-  lazy val hide = system.actorOf(Props(classOf[HideActor], find), "hide")
+ // lazy val find = system.actorOf(Props[AggregateClient], "find")
+ // lazy val hide = system.actorOf(Props(classOf[HideActor], find), "hide")
 
 
 
@@ -23,5 +18,5 @@ trait MainActors {
       lines
    }
 
-   hide ! LoadLog(read("C:\\PLIKI\\Programowanie\\Scala\\vitrace-testy\\catalina-small.txt"))
+  // hide ! LoadLog(read("C:\\PLIKI\\Programowanie\\Scala\\vitrace-testy\\catalina-small.txt"))
 }

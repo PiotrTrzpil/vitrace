@@ -19,8 +19,8 @@ trait ReactiveApi extends RouteConcatenation with StaticRoute with AbstractSyste
   val rootService = system.actorOf(Props(classOf[RootService], routes))
 
   lazy val routes = logRequest(showReq _) {
-    new FindService(find).route ~
-    new HideService(hide).route ~
+    new FindService(null).route ~
+    new HideService(null).route ~
     staticRoute
   }
   private def showReq(req : HttpRequest) = LogEntry(req.uri, InfoLevel)
