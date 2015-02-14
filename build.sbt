@@ -8,17 +8,16 @@ resolvers += "Spray" at "http://repo.spray.io"
 
 resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo)
 
-
-
 lazy val frontend = project.in(file("frontend"))
   .settings(
    //  bootSnippet := "example.ScalaJSExample().main();",
      scalaVersion  := "2.11.5",
      libraryDependencies ++= Seq(
-        "com.github.japgolly.scalajs-react" %%% "core" % "0.8.0"
-
+        "com.github.japgolly.scalajs-react" %%% "core" % "0.8.0",
+        "org.spaced.scalajs" %%% "scalajs-d3" % "0.1-SNAPSHOT"
      ),
-     jsDependencies += "org.webjars" % "react" % "0.12.1" / "react-with-addons.js" commonJSName "React"
+     jsDependencies += "org.webjars" % "react" % "0.12.1" / "react-with-addons.js" commonJSName "React",
+     jsDependencies += "org.webjars" % "d3js" % "3.5.3" / "d3.js" commonJSName "d3"
   )//.settings(workbenchSettings : _*)
   .enablePlugins(ScalaJSPlugin)
 
