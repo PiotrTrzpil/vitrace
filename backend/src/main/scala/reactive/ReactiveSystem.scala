@@ -7,7 +7,7 @@ import akka.actor.{Props, ActorSystem}
 import akka.io.IO
 import spray.can.Http
 import akka.stream.scaladsl._
-import spray.can.websocket.frame.Frame
+import spray.can.websocket.frame.{TextFrame, Frame}
 import akka.pattern._
 import reactive.hide.{LiveUpdate, CommandHandler, OnDemandUpdate}
 import akka.stream.actor.{ActorSubscriber, ActorPublisher}
@@ -16,6 +16,8 @@ import akka.util.Timeout
 import scala.concurrent.duration._
 import spray.can.server.UHttp
 import streamwebsocket.WebSocketMessage.Bound
+import reactive.find.LiveLogStreamer
+import rx.RxReactiveStreams
 
 object ReactiveSystem extends App with MainActors with ReactiveApi {
   implicit lazy val system = ActorSystem("reactive-system")
@@ -24,6 +26,8 @@ object ReactiveSystem extends App with MainActors with ReactiveApi {
    import system.dispatcher
 
    val liveUpdate = system.actorOf(Props(classOf[LiveUpdate]))
+
+   val liveFile = new LiveLogStreamer(args(0))
 
    val server = system.actorOf(WebSocketServer.props(), "websocket-server")
    (server ? WebSocketMessage.Bind("localhost", 8080)).map {
@@ -36,7 +40,9 @@ object ReactiveSystem extends App with MainActors with ReactiveApi {
                   import FlowGraphImplicits._
                   val merge = Merge[Frame]
                   Source(ActorPublisher(onDemand)) ~> merge
-                  Source(ActorPublisher(liveUpdate)) ~> merge ~> Sink(outbound)
+
+                  Source(RxReactiveStreams.toPublisher(liveFile.threadsafeEventBus.asJavaSubject))
+                     .map(e => TextFrame(e.content)) ~> merge ~> Sink(outbound)
                }.run()
                Source(inbound).runWith(Sink(ActorSubscriber[Frame](commandHandler)))
          }
