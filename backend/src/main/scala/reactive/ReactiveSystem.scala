@@ -17,14 +17,14 @@ import scala.concurrent.duration._
 import spray.can.server.UHttp
 import streamwebsocket.WebSocketMessage.Bound
 import reactive.find.LiveLogStreamer
-import rx.RxReactiveStreams
+import rx.{Observable, RxReactiveStreams}
 
 object ReactiveSystem extends App with MainActors with ReactiveApi {
   implicit lazy val system = ActorSystem("reactive-system")
   implicit val timeout = Timeout(3.seconds)
   implicit val mat = ActorFlowMaterializer()
    import system.dispatcher
-
+   import upickle._
    val liveUpdate = system.actorOf(Props(classOf[LiveUpdate]))
 
    val liveFile = new LiveLogStreamer(args(0))
@@ -41,8 +41,8 @@ object ReactiveSystem extends App with MainActors with ReactiveApi {
                   val merge = Merge[Frame]
                   Source(ActorPublisher(onDemand)) ~> merge
 
-                  Source(RxReactiveStreams.toPublisher(liveFile.threadsafeEventBus.asJavaSubject))
-                     .map(e => TextFrame(e.content)) ~> merge ~> Sink(outbound)
+                  Source(RxReactiveStreams.toPublisher[LogNode](liveFile.threadsafeEventBus.asJavaObservable.asInstanceOf[Observable[LogNode]]))
+                     .map(e => TextFrame(write(e))) ~> merge ~> Sink(outbound)
                }.run()
                Source(inbound).runWith(Sink(ActorSubscriber[Frame](commandHandler)))
          }

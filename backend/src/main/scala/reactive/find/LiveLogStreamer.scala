@@ -10,21 +10,21 @@ import org.apache.commons.io.input.{TailerListenerAdapter, Tailer, TailerListene
 import java.io.File
 import scala.concurrent.Future
 import org.slf4j.{LoggerFactory, Logger}
-
-case class LogEntry(content:String)
+import reactive.LogNode
+import reactive.LogLevels._
 
 class LiveLogStreamer(path:String) {
 
    val logger = LoggerFactory.getLogger(this.getClass)
    import scala.concurrent.ExecutionContext.Implicits.global
 
-   val eventBus = Subject[LogEntry]()
-   val threadsafeEventBus = SerializedSubject[LogEntry](eventBus)
+   val eventBus = Subject[LogNode]()
+   val threadsafeEventBus = SerializedSubject[LogNode](eventBus)
 
    val listener = new TailerListenerAdapter {
       override def handle(line:String) = {
          println("Read line from file: "+line)
-         threadsafeEventBus.onNext(LogEntry(line))
+         threadsafeEventBus.onNext(LogNode(line, Info))
       }
       override def handle(ex:Exception) = {
          println("File tailing error: "+ex)
